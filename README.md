@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/b04b1017-6a6e-4eb8-b3a3-6cd50148fc32)
+<img src="https://github.com/user-attachments/assets/b04b1017-6a6e-4eb8-b3a3-6cd50148fc32" width="400" height="200">
 
 # jXSS
 
@@ -37,7 +37,6 @@ jXSS requires at least two flags: a file containing target URLs and a custom can
 ```bash
 jxss -list <file> -canary <value> [options]
 ```
-![image](https://github.com/user-attachments/assets/52a6a374-43dd-4bdc-b1be-babf9a39c461)
 
 ### Command-line Options
 - `-list` **Required.** Path to a file containing a list of target URLs (one per line).
@@ -46,6 +45,9 @@ jxss -list <file> -canary <value> [options]
 - `-config` Path to a YAML configuration file containing custom regex patterns and proxy settings.
 - `-format` Output format: text, json, csv, or html (default: text).
 - `-output` File to save the output. If not specified, results are printed to stdout.
+
+![image](https://github.com/user-attachments/assets/47d03ae6-5ede-4f91-bf34-2ba9ddae43ae)
+
 
 ## Examples
 ### Basic Scan
