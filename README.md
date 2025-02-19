@@ -10,7 +10,7 @@ jXSS is a fast, flexible, and lightweight command-line tool written in Go for de
 - **Reflected XSS Detection:** Detects empty JavaScript variable assignments and injects a custom canary to identify reflected XSS.
 - **Customizable Rules:** Supports custom regex patterns via YAML configuration to fine-tune detection.
 - **Concurrent Processing:** Leverages Go's concurrency with a configurable worker pool and rate limiting to scan multiple URLs efficiently.
-- **Proxy Support:** (Optional) Allows HTTP/SOCKS5 proxy configuration to bypass rate limits or IP-based restrictions.
+- **Proxy Support:** (Optional) Allows HTTP/SOCKS5 proxy configuration to bypass rate limits or IP-based restrictions, along with proxy rotation.
 - **Flexible Output Formats:** Supports output in text, JSON, CSV, and HTML formats for integration with other tools.
 - **Structured Logging:** Uses Logrus for detailed logging and easy debugging.
 
