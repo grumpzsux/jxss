@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"context"
 
 	"golang.org/x/net/proxy"
 )
@@ -45,7 +46,7 @@ func createHTTPClient(proxyStr string) *http.Client {
 			if pu.Scheme == "socks5" || pu.Scheme == "socks5h" {
 				dialer, err := proxy.FromURL(pu, proxy.Direct)
 				if err == nil {
-					transport.DialContext = func(ctx net.Context, network, addr string) (net.Conn, error) {
+					transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
 						return dialer.Dial(network, addr)
 					}
 				}
