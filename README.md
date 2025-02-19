@@ -1,4 +1,4 @@
-<img src="https://github.com/user-attachments/assets/b04b1017-6a6e-4eb8-b3a3-6cd50148fc32" width="400" height="200">
+<center><img src="https://github.com/user-attachments/assets/b04b1017-6a6e-4eb8-b3a3-6cd50148fc32" width="400" height="200"></center>
 
 # jXSS
 
@@ -46,8 +46,7 @@ jxss -list <file> -canary <value> [options]
 - `-format` Output format: text, json, csv, or html (default: text).
 - `-output` File to save the output. If not specified, results are printed to stdout.
 
-![image](https://github.com/user-attachments/assets/47d03ae6-5ede-4f91-bf34-2ba9ddae43ae)
-
+![image](https://github.com/user-attachments/assets/fbe8e757-5e8f-45ae-ba0a-ccc0f585aaaa)
 
 ## Examples
 ### Basic Scan
