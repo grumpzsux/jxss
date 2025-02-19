@@ -9,40 +9,33 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/grumpzsux/jxss/pkg/output"
 )
 
-// ProcessURL fetches the page at targetURL, scans inline JavaScript, and checks for reflection of the canary.
-// It uses both a built-in regex pattern and can be extended to use a JavaScript parser if needed.
-func ProcessURL(targetURL, canary string, regexPatterns []string, client *http.Client) ([]struct {
-	URL     string
-	VarName string
-	Status  string
-	Message string
-}, error) {
-	var results []struct {
-		URL     string
-		VarName string
-		Status  string
-		Message string
-	}
+// ProcessURL fetches the page at targetURL, extracts inline JavaScript from <script> tags,
+// applies regex patterns to detect empty variable assignments, and checks whether the canary value is reflected.
+// It returns a slice of output.ScanResult containing the reflection details.
+func ProcessURL(targetURL, canary string, regexPatterns []string, client *http.Client) ([]output.ScanResult, error) {
+	var results []output.ScanResult
 
-	// Fetch the original page.
+	// Fetch the original page content.
 	body, err := fetchURL(client, targetURL)
 	if err != nil {
 		return nil, err
 	}
 
-	// Use GoQuery to extract inline JavaScript from <script> tags.
+	// Extract inline JavaScript blocks using GoQuery.
 	scripts, err := extractScripts(body)
 	if err != nil {
 		return nil, err
 	}
 
-	// For each script block, look for empty variable assignments.
+	// Iterate over each script block and apply each regex pattern.
 	for _, script := range scripts {
 		for _, pattern := range regexPatterns {
 			re, err := regexp.Compile(pattern)
 			if err != nil {
+				// Skip invalid regex patterns.
 				continue
 			}
 			matches := re.FindAllStringSubmatch(script, -1)
@@ -61,15 +54,10 @@ func ProcessURL(targetURL, canary string, regexPatterns []string, client *http.C
 				if err != nil {
 					continue
 				}
-				// Check for reflection.
+				// Construct a regex pattern to check if the canary is reflected.
 				reflectPattern := fmt.Sprintf(`(?i)(?:var|let|const)\s+%s\s*=\s*(['"])%s\1`, regexp.QuoteMeta(varName), regexp.QuoteMeta(canary))
 				if regexp.MustCompile(reflectPattern).MatchString(injectedBody) {
-					results = append(results, struct {
-						URL     string
-						VarName string
-						Status  string
-						Message string
-					}{
+					results = append(results, output.ScanResult{
 						URL:     injectedURL,
 						VarName: varName,
 						Status:  "reflected",
@@ -83,7 +71,7 @@ func ProcessURL(targetURL, canary string, regexPatterns []string, client *http.C
 	return results, nil
 }
 
-// fetchURL retrieves the content at the given URL using the provided client.
+// fetchURL retrieves the content of the specified URL using the provided HTTP client.
 func fetchURL(client *http.Client, targetURL string) (string, error) {
 	resp, err := client.Get(targetURL)
 	if err != nil {
@@ -97,7 +85,7 @@ func fetchURL(client *http.Client, targetURL string) (string, error) {
 	return string(bodyBytes), nil
 }
 
-// extractScripts uses GoQuery to extract the text from all <script> tags.
+// extractScripts uses GoQuery to extract the text content of all <script> tags from the provided HTML content.
 func extractScripts(htmlContent string) ([]string, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
 	if err != nil {
@@ -113,7 +101,7 @@ func extractScripts(htmlContent string) ([]string, error) {
 	return scripts, nil
 }
 
-// appendParameter adds a GET parameter to the URL.
+// appendParameter appends a GET parameter (key=value) to the given URL and returns the modified URL.
 func appendParameter(rawURL, key, value string) (string, error) {
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
